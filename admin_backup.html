@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJ TREZO — Адмін панель</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #FF6B35;
+    --orange2: #FF9A5C;
+    --grad: linear-gradient(135deg, #FF9A5C 0%, #FF6B35 50%, #E8520C 100%);
+    --bg: #0F0F0F;
+    --bg2: #181818;
+    --bg3: #222222;
+    --border: #2A2A2A;
+    --text: #FFFFFF;
+    --muted: #888888;
+    --radius: 8px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── LOAD SCREEN ── */
+  #screen-load {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .load-logo { font-size: 1.6rem; font-weight: 900; letter-spacing: .1em; }
+  .load-logo span { color: var(--orange); }
+  .load-title { font-size: 1.5rem; font-weight: 700; }
+  .load-desc { color: var(--muted); font-size: .9rem; line-height: 1.6; max-width: 400px; }
+
+  .load-box {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 3rem 4rem;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    background: var(--bg2);
+  }
+  .load-box:hover { border-color: var(--orange); background: rgba(255,107,53,.05); }
+  .load-box svg { width: 48px; height: 48px; color: var(--muted); margin-bottom: 1rem; }
+  .load-box p { color: var(--muted); font-size: .85rem; margin-top: .5rem; }
+  .load-box strong { display: block; font-size: 1rem; margin-bottom: .3rem; }
+  #fileInput { display: none; }
+
+  .btn-orange {
+    background: var(--grad);
+    color: #fff;
+    border: none;
+    padding: .8rem 2rem;
+    border-radius: var(--radius);
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-orange:hover { opacity: .88; }
+  .btn-orange:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ── ADMIN LAYOUT ── */
+  #screen-edit { display: none; height: 100vh; flex-direction: column; }
+  #screen-edit.visible { display: flex; }
+
+  .admin-header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .admin-header-left { display: flex; align-items: center; gap: 1.2rem; }
+  .admin-logo { font-size: 1rem; font-weight: 900; letter-spacing: .1em; }
+  .admin-logo span { color: var(--orange); }
+  .file-name { font-size: .75rem; color: var(--muted); background: var(--bg3); padding: .2rem .7rem; border-radius: 4px; }
+  .header-actions { display: flex; gap: .8rem; }
+
+  .btn-save {
+    background: var(--grad);
+    color: #fff;
+    border: none;
+    padding: .55rem 1.5rem;
+    border-radius: 6px;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    transition: opacity .2s;
+  }
+  .btn-save:hover { opacity: .88; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: .55rem 1.2rem;
+    border-radius: 6px;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+  }
+  .btn-outline:hover { color: var(--text); border-color: #555; }
+
+  /* ── TABS + CONTENT ── */
+  .admin-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 200px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    padding: 0 1rem .5rem;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 1rem;
+  }
+  .sidebar-section:first-child { margin-top: 0; }
+  .tab-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: .65rem 1.2rem;
+    color: var(--muted);
+    font-size: .85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    transition: color .15s, background .15s;
+    border-radius: 0;
+  }
+  .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,.04); }
+  .tab-btn.active { color: var(--orange); background: rgba(255,107,53,.08); border-right: 2px solid var(--orange); }
+
+  .content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem 2.5rem;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── FORM COMPONENTS ── */
+  .section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .field-group { margin-bottom: 1.4rem; }
+  .field-label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .5rem;
+  }
+  .field-input, .field-textarea, .field-select {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .7rem 1rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: .88rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .field-input:focus, .field-textarea:focus { border-color: var(--orange); }
+  .field-textarea { min-height: 90px; resize: vertical; line-height: 1.55; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* ── IMAGE UPLOAD ── */
+  .img-upload-wrap {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+  .img-preview {
+    width: 120px;
+    height: 90px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: .65rem;
+    text-align: center;
+  }
+  .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .img-upload-actions { display: flex; flex-direction: column; gap: .6rem; justify-content: center; }
+  .btn-upload {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: .55rem 1.1rem;
+    border-radius: 6px;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .btn-upload:hover { border-color: var(--orange); color: var(--orange); }
+  .img-hint { font-size: .7rem; color: var(--muted); }
+
+  /* ── GALLERY GRID ── */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .gallery-item {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery-item-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .5rem;
+    color: var(--muted);
+    font-size: .65rem;
+    text-align: center;
+    padding: .5rem;
+  }
+  .gallery-item-empty svg { width: 24px; opacity: .4; }
+  .gallery-delete {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 24px; height: 24px;
+    background: rgba(0,0,0,.7);
+    border: none;
+    border-radius: 4px;
+    color: #ff4444;
+    cursor: pointer;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+  }
+  .gallery-delete:hover { background: rgba(255,0,0,.3); }
+  .gallery-item-label {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,.65);
+    font-size: .6rem;
+    color: rgba(255,255,255,.7);
+    padding: .3rem .5rem;
+    text-align: center;
+  }
+
+  .btn-add-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+    width: 100%;
+    padding: .9rem;
+    background: rgba(255,107,53,.07);
+    border: 1.5px dashed rgba(255,107,53,.4);
+    border-radius: 6px;
+    color: var(--orange);
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .btn-add-photo:hover { background: rgba(255,107,53,.12); border-color: var(--orange); }
+
+  /* ── PACKAGE CARD ── */
+  .pkg-edit-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .pkg-edit-header {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .pkg-num {
+    width: 28px; height: 28px;
+    background: var(--grad);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .pkg-edit-title { font-weight: 700; font-size: .95rem; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #1a3a1a;
+    border: 1px solid #2d6a2d;
+    color: #5fff5f;
+    padding: .8rem 1.4rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .3s, transform .3s;
+    pointer-events: none;
+    z-index: 1000;
+  }
+  .toast.show { opacity: 1; transform: none; }
+
+  /* ── VIDEO SECTION ── */
+  .video-info {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    font-size: .82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .video-info strong { color: var(--text); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ════ LOAD SCREEN ════ -->
+<div id="screen-load">
+  <div class="load-logo">DJ <span>TREZO</span></div>
+  <div class="load-title">Адмін панель</div>
+  <p class="load-desc">Завантажте файл <strong>dj_trezo_v2.html</strong> для редагування. Після змін файл буде скачаний з оновленим вмістом.</p>
+
+  <div class="load-box" onclick="document.getElementById('fileInput').click()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    <strong>Натисніть щоб обрати файл</strong>
+    <p>або перетягніть dj_trezo_v2.html сюди</p>
+  </div>
+  <input type="file" id="fileInput" accept=".html" onchange="loadFile(this)">
+</div>
+
+<!-- ════ EDIT SCREEN ════ -->
+<div id="screen-edit">
+  <div class="admin-header">
+    <div class="admin-header-left">
+      <div class="admin-logo">DJ <span>TREZO</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;">/ Адмін</span></div>
+      <div class="file-name" id="fileName">—</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" onclick="reloadFile()">↩ Відкрити інший файл</button>
+      <button class="btn-save" onclick="exportHTML()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Зберегти та скачати
+      </button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">Контент</div>
+      <button class="tab-btn active" onclick="showTab('texts', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        Тексти
+      </button>
+      <button class="tab-btn" onclick="showTab('media', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Фото DJ
+      </button>
+      <button class="tab-btn" onclick="showTab('gallery', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="9" height="9"/><rect x="13" y="2" width="9" height="9"/><rect x="13" y="13" width="9" height="9"/><rect x="2" y="13" width="9" height="9"/></svg>
+        Галерея
+      </button>
+      <div class="sidebar-section">Комплекти</div>
+      <button class="tab-btn" onclick="showTab('pkg1', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Базовий
+      </button>
+      <button class="tab-btn" onclick="showTab('pkg2', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Стандарт
+      </button>
+      <button class="tab-btn" onclick="showTab('pkg3', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Преміум
+      </button>
+      <div class="sidebar-section">Налаштування</div>
+      <button class="tab-btn" onclick="showTab('video', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Відео фону
+      </button>
+      <button class="tab-btn" onclick="showTab('contact', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.82 19 19.5 19.5 0 0 1 4.81 12a19.79 19.79 0 0 1-2.92-8A2 2 0 0 1 3.87 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Контакти
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area">
+
+      <!-- TEXTS -->
+      <div id="tab-texts" class="tab-panel active">
+        <div class="section-heading">Основні тексти</div>
+
+        <div class="field-group">
+          <label class="field-label">Підзаголовок (під DJ TREZO)</label>
+          <input class="field-input" id="heroSub" placeholder="Музика, яка залишається в пам'яті назавжди">
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Роки досвіду (число)</label>
+            <input class="field-input" id="statYears" placeholder="4+">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Кількість подій</label>
+            <input class="field-input" id="statEvents" placeholder="200+">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Про мене — перший абзац</label>
+          <textarea class="field-textarea" id="aboutText1"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Про мене — другий абзац</label>
+          <textarea class="field-textarea" id="aboutText2"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">CTA — головний заголовок</label>
+          <input class="field-input" id="ctaHeading">
+        </div>
+        <div class="field-group">
+          <label class="field-label">CTA — підзаголовок</label>
+          <textarea class="field-textarea" id="ctaSub" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <!-- MEDIA -->
+      <div id="tab-media" class="tab-panel">
+        <div class="section-heading">Фото DJ (блок "Про мене")</div>
+        <div class="img-upload-wrap">
+          <div class="img-preview" id="djPhotoPreview">
+            <span style="font-size:.6rem;padding:.5rem;">Немає фото</span>
+          </div>
+          <div class="img-upload-actions">
+            <button class="btn-upload" onclick="document.getElementById('djPhotoInput').click()">📷 Завантажити фото</button>
+            <input type="file" id="djPhotoInput" accept="image/*" style="display:none" onchange="uploadDjPhoto(this)">
+            <div class="img-hint">JPG, PNG, WEBP<br>Рекомендується 3:4 (вертикальне)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GALLERY -->
+      <div id="tab-gallery" class="tab-panel">
+        <div class="section-heading">Галерея (колаж)</div>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.5rem;">До 5 фотографій для колажу. Клікніть × щоб видалити.</p>
+
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- populated by JS -->
+        </div>
+
+        <label class="btn-add-photo" id="addPhotoBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Додати фото до галереї
+          <input type="file" accept="image/*" multiple style="display:none" id="galleryInput" onchange="addGalleryPhotos(this)">
+        </label>
+      </div>
+
+      <!-- PACKAGE 1 -->
+      <div id="tab-pkg1" class="tab-panel">
+        <div class="section-heading">Комплект — Базовий</div>
+        <div class="pkg-edit-card">
+          <div class="img-upload-wrap" style="margin-bottom:1.2rem;">
+            <div class="img-preview" id="pkg1Preview">
+              <span style="font-size:.6rem;padding:.5rem;">Немає фото</span>
+            </div>
+            <div class="img-upload-actions">
+              <button class="btn-upload" onclick="document.getElementById('pkg1Input').click()">📷 Фото комплекту</button>
+              <input type="file" id="pkg1Input" accept="image/*" style="display:none" onchange="uploadPkgPhoto(this, 0)">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Назва</label>
+            <input class="field-input" id="pkg1Name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Опис</label>
+            <textarea class="field-textarea" id="pkg1Desc"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Характеристики (кожна з нового рядка)</label>
+            <textarea class="field-textarea" id="pkg1Features" style="min-height:120px;"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Ціна</label>
+            <input class="field-input" id="pkg1Price" placeholder="від 8 000 грн">
+          </div>
+        </div>
+      </div>
+
+      <!-- PACKAGE 2 -->
+      <div id="tab-pkg2" class="tab-panel">
+        <div class="section-heading">Комплект — Стандарт</div>
+        <div class="pkg-edit-card">
+          <div class="img-upload-wrap" style="margin-bottom:1.2rem;">
+            <div class="img-preview" id="pkg2Preview">
+              <span style="font-size:.6rem;padding:.5rem;">Немає фото</span>
+            </div>
+            <div class="img-upload-actions">
+              <button class="btn-upload" onclick="document.getElementById('pkg2Input').click()">📷 Фото комплекту</button>
+              <input type="file" id="pkg2Input" accept="image/*" style="display:none" onchange="uploadPkgPhoto(this, 1)">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Назва</label>
+            <input class="field-input" id="pkg2Name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Опис</label>
+            <textarea class="field-textarea" id="pkg2Desc"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Характеристики (кожна з нового рядка)</label>
+            <textarea class="field-textarea" id="pkg2Features" style="min-height:120px;"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Ціна</label>
+            <input class="field-input" id="pkg2Price">
+          </div>
+        </div>
+      </div>
+
+      <!-- PACKAGE 3 -->
+      <div id="tab-pkg3" class="tab-panel">
+        <div class="section-heading">Комплект — Преміум</div>
+        <div class="pkg-edit-card">
+          <div class="img-upload-wrap" style="margin-bottom:1.2rem;">
+            <div class="img-preview" id="pkg3Preview">
+              <span style="font-size:.6rem;padding:.5rem;">Немає фото</span>
+            </div>
+            <div class="img-upload-actions">
+              <button class="btn-upload" onclick="document.getElementById('pkg3Input').click()">📷 Фото комплекту</button>
+              <input type="file" id="pkg3Input" accept="image/*" style="display:none" onchange="uploadPkgPhoto(this, 2)">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Назва</label>
+            <input class="field-input" id="pkg3Name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Опис</label>
+            <textarea class="field-textarea" id="pkg3Desc"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Характеристики (кожна з нового рядка)</label>
+            <textarea class="field-textarea" id="pkg3Features" style="min-height:120px;"></textarea>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Ціна</label>
+            <input class="field-input" id="pkg3Price">
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEO -->
+      <div id="tab-video" class="tab-panel">
+        <div class="section-heading">Відео фону</div>
+
+        <div class="video-info">
+          <strong>Як це працює:</strong><br>
+          Відеофайл повинен лежати <strong>в тій самій папці</strong>, що й сайт. Тут ви вказуєте ім'я файлу. Якщо відео не знайдено — показується красивий анімований фон.
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Ім'я відеофайлу</label>
+          <input class="field-input" id="videoSrc" placeholder="hero.mp4">
+        </div>
+
+        <div class="video-info" style="margin-top:.5rem;">
+          💡 <strong>Підтримувані формати:</strong> MP4 (H.264) — рекомендовано<br>
+          Файл <code style="color:var(--orange);">hero.mp4</code> вже сконвертовано і збережено на Робочому столі.
+        </div>
+
+        <div class="field-group" style="margin-top:1.5rem;">
+          <label class="field-label">Або завантажте нове відео (конвертується в посилання)</label>
+          <button class="btn-upload" style="width:100%;padding:.7rem;" onclick="document.getElementById('videoUpload').click()">🎬 Обрати відео файл</button>
+          <input type="file" id="videoUpload" accept="video/*" style="display:none" onchange="handleVideoUpload(this)">
+          <div class="img-hint" style="margin-top:.5rem;">Файл залишається локальним. Для роботи на хостингу потрібно завантажити відео на сервер.</div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div id="tab-contact" class="tab-panel">
+        <div class="section-heading">Контактна інформація</div>
+        <div class="field-group">
+          <label class="field-label">Телефон</label>
+          <input class="field-input" id="contactPhone" placeholder="+38 (000) 000-00-00">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <input class="field-input" id="contactEmail" placeholder="djtrezo@email.com">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Місто / Географія</label>
+          <input class="field-input" id="contactCity" placeholder="Київ та по всій Україні">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Посилання "Подзвонити" (href)</label>
+          <input class="field-input" id="contactTel" placeholder="tel:+380000000000">
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+  </div><!-- /admin-body -->
+</div><!-- /screen-edit -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+let doc = null;
+let originalFileName = 'dj_trezo_v2.html';
+let galleryPhotos = []; // array of {src, slot} - max 5
+
+// ── Load ──────────────────────────────────────────────────────────
+function loadFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  originalFileName = file.name;
+  document.getElementById('fileName').textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const parser = new DOMParser();
+    doc = parser.parseFromString(e.target.result, 'text/html');
+    populateAllFields();
+    document.getElementById('screen-load').style.display = 'none';
+    document.getElementById('screen-edit').classList.add('visible');
+    initGalleryGrid();
+  };
+  reader.readAsText(file);
+}
+
+function reloadFile() {
+  document.getElementById('screen-load').style.display = 'flex';
+  document.getElementById('screen-edit').classList.remove('visible');
+  document.getElementById('fileInput').value = '';
+  doc = null;
+}
+
+// ── Populate form from doc ────────────────────────────────────────
+function populateAllFields() {
+  setText('heroSub', '.hero-sub');
+  setVal('statYears',  q('.stat-item:nth-child(1) .stat-num')?.textContent?.trim());
+  setVal('statEvents', q('.stat-item:nth-child(2) .stat-num')?.textContent?.trim());
+
+  const aboutSubs = doc.querySelectorAll('#about .about-text .section-sub');
+  if (aboutSubs[0]) setVal('aboutText1', aboutSubs[0].textContent.trim());
+  if (aboutSubs[1]) setVal('aboutText2', aboutSubs[1].textContent.trim());
+
+  const ctaH = q('.cta-heading');
+  if (ctaH) setVal('ctaHeading', ctaH.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g,'').trim());
+  setText('ctaSub', '.cta-sub');
+
+  // Video
+  const vsrc = q('video source');
+  if (vsrc) setVal('videoSrc', vsrc.getAttribute('src'));
+
+  // Contact
+  const details = doc.querySelectorAll('.contact-detail-text');
+  if (details[0]) setVal('contactTel',  q('a[href^="tel:"]', doc)?.getAttribute('href') || '');
+  const spans = doc.querySelectorAll('.contact-detail-text span');
+  if (spans[0]) setVal('contactPhone', spans[0].textContent.trim());
+  if (spans[1]) setVal('contactCity',  spans[1].textContent.trim());
+  if (spans[2]) setVal('contactEmail', spans[2].textContent.trim());
+
+  // Packages
+  const pkgCards = doc.querySelectorAll('.pkg-card');
+  pkgCards.forEach((card, i) => {
+    const n = i + 1;
+    setVal(`pkg${n}Name`,  card.querySelector('.pkg-name')?.textContent?.trim());
+    setVal(`pkg${n}Desc`,  card.querySelector('.pkg-desc')?.textContent?.trim());
+    setVal(`pkg${n}Price`, card.querySelector('.pkg-price')?.textContent?.replace(/\/\s*захід/, '').trim());
+    const feats = Array.from(card.querySelectorAll('.pkg-features li')).map(li => li.textContent.trim());
+    setVal(`pkg${n}Features`, feats.join('\n'));
+
+    // package photo preview
+    const img = card.querySelector('.pkg-photo img');
+    if (img && img.src && img.src.startsWith('data:')) {
+      const preview = document.getElementById(`pkg${n}Preview`);
+      preview.innerHTML = `<img src="${img.src}">`;
+    }
+  });
+
+  // DJ photo preview
+  const djImg = q('.about-photo-frame img');
+  if (djImg && djImg.src && djImg.src.startsWith('data:')) {
+    document.getElementById('djPhotoPreview').innerHTML = `<img src="${djImg.src}">`;
+  }
+
+  // Gallery
+  galleryPhotos = [];
+  doc.querySelectorAll('.collage-cell').forEach((cell, i) => {
+    const img = cell.querySelector('img');
+    if (img && img.src && img.src.startsWith('data:')) {
+      galleryPhotos[i] = img.src;
+    } else {
+      galleryPhotos[i] = null;
+    }
+  });
+}
+
+// ── Tab switching ─────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ── Gallery grid ──────────────────────────────────────────────────
+function initGalleryGrid() {
+  renderGalleryGrid();
+}
+
+function renderGalleryGrid() {
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = '';
+  const labels = ['Фото 1', 'Фото 2', 'Фото 3', 'Фото 4', 'Фото 5'];
+  for (let i = 0; i < 5; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'gallery-item';
+    if (galleryPhotos[i]) {
+      cell.innerHTML = `
+        <img src="${galleryPhotos[i]}" alt="">
+        <button class="gallery-delete" onclick="removeGalleryPhoto(${i})" title="Видалити">×</button>
+        <div class="gallery-item-label">${labels[i]}</div>`;
+    } else {
+      cell.innerHTML = `
+        <div class="gallery-item-empty" onclick="triggerGalleryUpload(${i})" style="cursor:pointer;height:100%;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>${labels[i]}<br>Клікніть</span>
+        </div>`;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function triggerGalleryUpload(slot) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = ev => { galleryPhotos[slot] = ev.target.result; renderGalleryGrid(); };
+    r.readAsDataURL(file);
+  };
+  inp.click();
+}
+
+function addGalleryPhotos(input) {
+  const files = Array.from(input.files);
+  let slot = galleryPhotos.findIndex(p => !p);
+  if (slot === -1) { showToast('Галерея заповнена (макс. 5 фото)'); return; }
+
+  files.forEach(file => {
+    if (slot >= 5) return;
+    const r = new FileReader();
+    const s = slot;
+    r.onload = ev => { galleryPhotos[s] = ev.target.result; renderGalleryGrid(); };
+    r.readAsDataURL(file);
+    slot++;
+  });
+  input.value = '';
+}
+
+function removeGalleryPhoto(i) {
+  galleryPhotos[i] = null;
+  renderGalleryGrid();
+}
+
+// ── Photo uploads ─────────────────────────────────────────────────
+function uploadDjPhoto(input) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('djPhotoPreview').innerHTML = `<img src="${e.target.result}">`;
+    input._base64 = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function uploadPkgPhoto(input, idx) {
+  const file = input.files[0]; if (!file) return;
+  const r = new FileReader();
+  const n = idx + 1;
+  r.onload = e => {
+    document.getElementById(`pkg${n}Preview`).innerHTML = `<img src="${e.target.result}">`;
+    input._base64 = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function handleVideoUpload(input) {
+  const file = input.files[0]; if (!file) return;
+  // Just update the filename field
+  setVal('videoSrc', file.name);
+  showToast(`Вказано відео: ${file.name} — скопіюйте файл у папку з сайтом`);
+}
+
+// ── Export ────────────────────────────────────────────────────────
+function exportHTML() {
+  if (!doc) { showToast('Спочатку завантажте файл!'); return; }
+
+  // Apply texts
+  applyText('.hero-sub', 'heroSub');
+  applyStatNum(0, 'statYears');
+  applyStatNum(1, 'statEvents');
+
+  const aboutSubs = doc.querySelectorAll('#about .about-text .section-sub');
+  if (aboutSubs[0]) aboutSubs[0].textContent = val('aboutText1');
+  if (aboutSubs[1]) aboutSubs[1].textContent = val('aboutText2');
+
+  const ctaH = q('.cta-heading');
+  if (ctaH) ctaH.innerHTML = val('ctaHeading').replace(/\n/g, '<br>');
+  applyText('.cta-sub', 'ctaSub');
+
+  // Video source
+  const vsrc = q('video source');
+  if (vsrc) vsrc.setAttribute('src', val('videoSrc') || 'hero.mp4');
+
+  // Contact
+  const spans = doc.querySelectorAll('.contact-detail-text span');
+  if (spans[0]) spans[0].textContent = val('contactPhone');
+  if (spans[1]) spans[1].textContent = val('contactCity');
+  if (spans[2]) spans[2].textContent = val('contactEmail');
+  const telLink = q('a[href^="tel:"]', doc);
+  if (telLink) telLink.setAttribute('href', val('contactTel'));
+
+  // DJ photo
+  const djInput = document.getElementById('djPhotoInput');
+  if (djInput._base64) {
+    const wrap = q('.about-photo-wrap');
+    if (wrap) {
+      wrap.removeAttribute('data-photo');
+      const img = wrap.querySelector('img');
+      const ph  = wrap.querySelector('.about-photo-placeholder');
+      if (img) { img.src = djInput._base64; img.style.display = 'block'; }
+      if (ph)  ph.style.display = 'none';
+    }
+  }
+
+  // Package photos + texts
+  const pkgCards = doc.querySelectorAll('.pkg-card');
+  pkgCards.forEach((card, i) => {
+    const n = i + 1;
+    const nameEl  = card.querySelector('.pkg-name');
+    const descEl  = card.querySelector('.pkg-desc');
+    const priceEl = card.querySelector('.pkg-price');
+    const featEl  = card.querySelector('.pkg-features');
+
+    if (nameEl)  nameEl.textContent = val(`pkg${n}Name`) || nameEl.textContent;
+    if (descEl)  descEl.textContent = val(`pkg${n}Desc`) || descEl.textContent;
+    if (priceEl) {
+      const priceVal = val(`pkg${n}Price`);
+      if (priceVal) priceEl.innerHTML = priceVal + ' <span>/ захід</span>';
+    }
+    if (featEl) {
+      const feats = val(`pkg${n}Features`).split('\n').filter(f => f.trim());
+      if (feats.length) {
+        featEl.innerHTML = feats.map(f => `<li>${f.trim()}</li>`).join('');
+      }
+    }
+
+    // Package photo
+    const pkgInput = document.getElementById(`pkg${n}Input`);
+    if (pkgInput && pkgInput._base64) {
+      const photoWrap = card.querySelector('.pkg-photo');
+      if (photoWrap) {
+        photoWrap.removeAttribute('data-photo');
+        const img = photoWrap.querySelector('img');
+        const ph  = photoWrap.querySelector('.ph-auto');
+        if (img) { img.src = pkgInput._base64; img.style.display = 'block'; }
+        if (ph)  ph.style.display = 'none';
+      }
+    }
+  });
+
+  // Gallery photos
+  const galleryCells = doc.querySelectorAll('.collage-cell');
+  galleryCells.forEach((cell, i) => {
+    if (galleryPhotos[i]) {
+      cell.removeAttribute('data-photo');
+      const img = cell.querySelector('img');
+      const ph  = cell.querySelector('.ph');
+      if (img) { img.src = galleryPhotos[i]; img.style.display = 'block'; }
+      if (ph)  ph.style.display = 'none';
+    }
+  });
+
+  // Serialize & download
+  const html = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = originalFileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+
+  showToast('✅ Файл збережено! Замініть старий файл новим.');
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function q(selector, root) { return (root || doc).querySelector(selector); }
+function val(id) { return (document.getElementById(id)?.value || '').trim(); }
+function setVal(id, v) { const el = document.getElementById(id); if (el && v != null) el.value = v; }
+function setText(id, selector) {
+  const el = q(selector);
+  if (el) setVal(id, el.textContent.trim());
+}
+function applyText(selector, inputId) {
+  const el = q(selector);
+  if (el) { const v = val(inputId); if (v) el.textContent = v; }
+}
+function applyStatNum(idx, inputId) {
+  const items = doc.querySelectorAll('.stat-item .stat-num');
+  if (items[idx]) { const v = val(inputId); if (v) items[idx].textContent = v; }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// Drag & drop on load screen
+document.getElementById('screen-load').addEventListener('dragover', e => { e.preventDefault(); });
+document.getElementById('screen-load').addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.html')) {
+    const fakeInput = { files: [file] };
+    loadFile(fakeInput);
+  }
+});
+</script>
+</body>
+</html>
