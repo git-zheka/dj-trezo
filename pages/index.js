@@ -432,7 +432,7 @@ export default function Home({ c }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const contentPath = path.join(process.cwd(), 'data', 'content.json')
   const raw = fs.readFileSync(contentPath, 'utf-8')
   const c = JSON.parse(raw)
