@@ -106,14 +106,14 @@ export default function Home({ c }) {
         <meta name="robots" content="index, follow" />
         <meta name="author" content="DJ TREZO" />
         <meta name="theme-color" content="#0a0a0a" />
-        <link rel="canonical" href="https://dj-trezo.party" />
+        <link rel="canonical" href="https://dj-trezo.top" />
 
         {/* Open Graph — для Facebook, Viber, Telegram */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://dj-trezo.party" />
+        <meta property="og:url" content="https://dj-trezo.top" />
         <meta property="og:title" content="DJ TREZO — Діджей на весілля та корпоративи у Львові" />
         <meta property="og:description" content="Професійний діджей у Львові. Весілля, корпоративи, клубні вечірки. 4+ роки досвіду, 200+ подій. Гарантована якість звуку." />
-        <meta property="og:image" content="https://dj-trezo.party/images/packages/dj_trezo.jpg" />
+        <meta property="og:image" content="https://dj-trezo.top/images/packages/dj_trezo.jpg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="uk_UA" />
@@ -123,7 +123,7 @@ export default function Home({ c }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="DJ TREZO — Діджей на весілля та корпоративи у Львові" />
         <meta name="twitter:description" content="Професійний діджей у Львові. Весілля, корпоративи, клубні вечірки." />
-        <meta name="twitter:image" content="https://dj-trezo.party/images/packages/dj_trezo.jpg" />
+        <meta name="twitter:image" content="https://dj-trezo.top/images/packages/dj_trezo.jpg" />
 
         {/* JSON-LD — структуровані дані для Google */}
         <script
@@ -133,13 +133,13 @@ export default function Home({ c }) {
             "@graph": [
               {
                 "@type": "LocalBusiness",
-                "@id": "https://dj-trezo.party/#business",
+                "@id": "https://dj-trezo.top/#business",
                 "name": "DJ TREZO",
                 "description": "Професійний діджей у Львові на весілля, корпоративи, дні народження та клубні вечірки",
-                "url": "https://dj-trezo.party",
+                "url": "https://dj-trezo.top",
                 "telephone": "+380981080326",
                 "email": "zhekapapik67@gmail.com",
-                "image": "https://dj-trezo.party/images/packages/dj_trezo.jpg",
+                "image": "https://dj-trezo.top/images/packages/dj_trezo.jpg",
                 "address": {
                   "@type": "PostalAddress",
                   "addressLocality": "Львів",
@@ -174,8 +174,8 @@ export default function Home({ c }) {
               },
               {
                 "@type": "WebSite",
-                "@id": "https://dj-trezo.party/#website",
-                "url": "https://dj-trezo.party",
+                "@id": "https://dj-trezo.top/#website",
+                "url": "https://dj-trezo.top",
                 "name": "DJ TREZO",
                 "description": "Офіційний сайт DJ TREZO — діджея з Львова",
                 "inLanguage": "uk-UA"
