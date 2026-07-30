@@ -34,6 +34,9 @@ yarn-error.log*
 # стара папка з відео (залишок HTML-сайту)
 video/
 
+# hero відео (>25MB — хостимо окремо)
+public/video/
+
 # важкі медіафайли (оригінали — не для GitHub)
 public/images/gallery/*.MOV
 public/images/gallery/*.HEIC
