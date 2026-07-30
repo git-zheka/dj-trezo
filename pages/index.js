@@ -5,7 +5,9 @@ import path from 'path'
 
 function GalleryMasonry({ gallery }) {
   const [hovered, setHovered] = useState(null)
+  const [showAll, setShowAll] = useState(false)
   const items = gallery.items || []
+  const MOBILE_LIMIT = 3
 
   return (
     <section id="collage">
@@ -18,10 +20,11 @@ function GalleryMasonry({ gallery }) {
         {items.map((item, i) => {
           const isHov = hovered === i
           const isOth = hovered !== null && hovered !== i
+          const hiddenOnMobile = !showAll && i >= MOBILE_LIMIT
           return (
             <div
               key={i}
-              className="masonry-item"
+              className={`masonry-item${hiddenOnMobile ? ' gallery-hidden-mobile' : ''}`}
               style={{
                 transform: isHov ? 'scale(1.05)' : isOth ? 'scale(0.96)' : 'scale(1)',
                 zIndex: isHov ? 10 : 1,
@@ -56,6 +59,13 @@ function GalleryMasonry({ gallery }) {
           )
         })}
       </div>
+      {!showAll && items.length > MOBILE_LIMIT && (
+        <div className="gallery-more-wrap">
+          <button className="gallery-more-btn" onClick={() => setShowAll(true)}>
+            Показати ще {items.length - MOBILE_LIMIT} фото/відео
+          </button>
+        </div>
+      )}
     </section>
   )
 }
