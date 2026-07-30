@@ -201,7 +201,7 @@ export default function Home({ c }) {
       <section id="hero">
         <div className="hero-bg-anim" />
         <video className="hero-video" id="heroVideo" autoPlay muted loop playsInline>
-          <source src="/video/hero.mp4" type="video/mp4" />
+          <source src="https://pub-8f58fc23b37a4f16b316abc09c870688.r2.dev/hero.mp4" type="video/mp4" />
         </video>
         <div className="hero-overlay" />
         <div className="hero-content">
