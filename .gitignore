@@ -31,6 +31,9 @@ yarn-error.log*
 .vscode/
 .idea/
 
+# стара папка з відео (залишок HTML-сайту)
+video/
+
 # важкі медіафайли (оригінали — не для GitHub)
 public/images/gallery/*.MOV
 public/images/gallery/*.HEIC
