@@ -50,7 +50,7 @@ function GalleryMasonry({ gallery }) {
                 ) : (
                   <img
                     src={item.src}
-                    alt={`Фото ${i + 1}`}
+                    alt={`DJ TREZO — фото з події у Львові ${i + 1}`}
                     onError={e => { e.currentTarget.closest('.masonry-item').style.display = 'none' }}
                   />
                 )}
@@ -67,6 +67,48 @@ function GalleryMasonry({ gallery }) {
         </div>
       )}
     </section>
+  )
+}
+
+const FAQS = [
+  {
+    q: 'Скільки коштує діджей на весілля у Львові?',
+    a: 'Вартість залежить від комплекту апаратури, тривалості та локації. Базовий комплект підходить для заходів до 20 гостей, Стандарт — для весіль 20–150 гостей, Преміум — для великих подій. Ціна обговорюється індивідуально — напишіть або зателефонуйте для розрахунку.',
+  },
+  {
+    q: 'Чи надаєш ти звукове обладнання та освітлення?',
+    a: 'Так, у всіх комплектах включено професійну акустику Electro-Voice та LED-освітлення. Не потрібно окремо орендувати колонки або світло — все вже включено в ціну.',
+  },
+  {
+    q: 'Чи можна замовити DJ TREZO поза Львовом?',
+    a: 'Так, виїжджаю по всій Україні. Вартість виїзду за межі Львова обговорюється окремо залежно від відстані.',
+  },
+  {
+    q: 'Як далеко заздалегідь потрібно бронювати дату?',
+    a: 'Рекомендую бронювати мінімум за 1–2 місяці, а для весілля — за 3–6 місяців. Популярні дати (субота, святкові дні) розбираються швидко.',
+  },
+  {
+    q: 'Яку музику ти граєш?',
+    a: 'Граю будь-який жанр під ваш захід: поп, хіп-хоп, електронна музика, ретро, українські хіти. Список музики узгоджується заздалегідь — можна надіслати побажання.',
+  },
+  {
+    q: 'Чи є можливість додати ведучого або мікрофон?',
+    a: 'Так, це доступно як додаткова послуга. Бездротовий мікрофон для гостей, а також послуги ведучого можна замовити разом з діджейством.',
+  },
+]
+
+function FaqItem({ q, a }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className={`faq-item${open ? ' faq-open' : ''}`} onClick={() => setOpen(o => !o)}>
+      <div className="faq-q">
+        <span>{q}</span>
+        <svg className="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      {open && <div className="faq-a">{a}</div>}
+    </div>
   )
 }
 
@@ -190,6 +232,17 @@ export default function Home({ c }) {
                 "name": "DJ TREZO",
                 "description": "Офіційний сайт DJ TREZO — діджея з Львова",
                 "inLanguage": "uk-UA"
+              },
+              {
+                "@type": "FAQPage",
+                "mainEntity": [
+                  { "@type": "Question", "name": "Скільки коштує діджей на весілля у Львові?", "acceptedAnswer": { "@type": "Answer", "text": "Вартість залежить від комплекту апаратури, тривалості та локації. Ціна обговорюється індивідуально — напишіть або зателефонуйте для розрахунку." } },
+                  { "@type": "Question", "name": "Чи надаєш ти звукове обладнання та освітлення?", "acceptedAnswer": { "@type": "Answer", "text": "Так, у всіх комплектах включено професійну акустику Electro-Voice та LED-освітлення. Не потрібно окремо орендувати колонки або світло." } },
+                  { "@type": "Question", "name": "Чи можна замовити DJ TREZO поза Львовом?", "acceptedAnswer": { "@type": "Answer", "text": "Так, виїжджаю по всій Україні. Вартість виїзду за межі Львова обговорюється окремо залежно від відстані." } },
+                  { "@type": "Question", "name": "Як далеко заздалегідь потрібно бронювати дату?", "acceptedAnswer": { "@type": "Answer", "text": "Рекомендую бронювати мінімум за 1–2 місяці, а для весілля — за 3–6 місяців." } },
+                  { "@type": "Question", "name": "Яку музику ти граєш?", "acceptedAnswer": { "@type": "Answer", "text": "Граю будь-який жанр: поп, хіп-хоп, електронна музика, ретро, українські хіти. Список музики узгоджується заздалегідь." } },
+                  { "@type": "Question", "name": "Чи є можливість додати ведучого або мікрофон?", "acceptedAnswer": { "@type": "Answer", "text": "Так, бездротовий мікрофон для гостей та послуги ведучого можна замовити разом з діджейством." } }
+                ]
               }
             ]
           })}}
@@ -216,7 +269,10 @@ export default function Home({ c }) {
         </video>
         <div className="hero-overlay" />
         <div className="hero-content">
-          <h1 className="hero-name">DJ <span className="accent">TREZO</span></h1>
+          <h1 className="hero-name">
+            DJ <span className="accent">TREZO</span>
+            <span className="sr-only"> — Діджей на весілля та корпоративи у Львові</span>
+          </h1>
           <p className="hero-sub">{hero.sub}</p>
           <div className="hero-actions">
             <a href="#packages" className="btn-primary">{hero.btn1}</a>
@@ -321,6 +377,17 @@ export default function Home({ c }) {
               <div className="extra-desc">{item.desc}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ═══ FAQ ═══ */}
+      <section id="faq">
+        <div className="faq-header fade-in">
+          <span className="section-tag">Запитання та відповіді</span>
+          <h2 className="section-title">Часті <span className="em">запитання</span></h2>
+        </div>
+        <div className="faq-list fade-in">
+          {FAQS.map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}
         </div>
       </section>
 
