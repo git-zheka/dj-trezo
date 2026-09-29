@@ -100,14 +100,27 @@ const FAQS = [
 function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className={`faq-item${open ? ' faq-open' : ''}`} onClick={() => setOpen(o => !o)}>
-      <div className="faq-q">
+    <div
+      onClick={() => setOpen(o => !o)}
+      style={{
+        background: '#1a1a1a',
+        border: `1px solid ${open ? 'rgba(255,107,53,.4)' : 'rgba(255,255,255,.07)'}`,
+        borderRadius: '6px',
+        padding: '1.25rem 1.5rem',
+        cursor: 'pointer',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#fff', fontSize: '.95rem' }}>
         <span>{q}</span>
-        <svg className="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg style={{ width: 18, height: 18, flexShrink: 0, color: '#FF6B35', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .35s' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </div>
-      {open && <div className="faq-a">{a}</div>}
+      {open && (
+        <div style={{ marginTop: '1rem', color: '#999', fontSize: '.9rem', lineHeight: 1.7, borderTop: '1px solid rgba(255,255,255,.06)', paddingTop: '1rem' }}>
+          {a}
+        </div>
+      )}
     </div>
   )
 }
@@ -378,12 +391,12 @@ export default function Home({ c }) {
       </section>
 
       {/* ═══ FAQ ═══ */}
-      <section id="faq">
-        <div className="faq-header fade-in">
+      <section id="faq" style={{ background: '#111111', padding: '7rem 6%' }}>
+        <div className="faq-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <span className="section-tag">Запитання та відповіді</span>
-          <h2 className="section-title">Часті <span className="em">запитання</span></h2>
+          <h2 className="section-title" style={{ color: '#fff' }}>Часті <span className="em">запитання</span></h2>
         </div>
-        <div className="faq-list">
+        <div className="faq-list" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
           {FAQS.map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}
         </div>
       </section>
