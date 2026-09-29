@@ -269,10 +269,7 @@ export default function Home({ c }) {
         </video>
         <div className="hero-overlay" />
         <div className="hero-content">
-          <h1 className="hero-name">
-            DJ <span className="accent">TREZO</span>
-            <span className="sr-only"> — Діджей на весілля та корпоративи у Львові</span>
-          </h1>
+          <h1 className="hero-name">DJ <span className="accent">TREZO</span></h1>
           <p className="hero-sub">{hero.sub}</p>
           <div className="hero-actions">
             <a href="#packages" className="btn-primary">{hero.btn1}</a>
