@@ -151,10 +151,10 @@ export default function Home({ c }) {
   return (
     <>
       <Head>
-        <title>DJ TREZO — Діджей на весілля та корпоративи у Львові</title>
+        <title>DJ TREZO — Діджей (Диджей) на весілля та корпоративи у Львові | Замовити DJ</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="DJ TREZO — професійний діджей у Львові. Весілля, корпоративи, дні народження та клубні вечірки. 4+ роки досвіду, 200+ подій. Замовити: +38 (098) 108-03-26" />
-        <meta name="keywords" content="діджей Львів, DJ Львів, діджей на весілля Львів, DJ на весілля, діджей на корпоратив, замовити діджея Львів, DJ TREZO, диджей Львів" />
+        <meta name="description" content="DJ TREZO — діджей у Львові на весілля, корпоратив, день народження, вечірку. Музичне оформлення заходів, виїзд по Україні. 4+ роки, 200+ подій. ☎ +38 (098) 108-03-26" />
+        <meta name="keywords" content="діджей Львів, DJ Львів, dj львів, диджей Львів, ді джей Львів, діджей на весілля Львів, DJ на весілля Львів, замовити діджея Львів, музичне оформлення весілля Львів, діджей на корпоратив Львів, DJ на корпоратив, діджей на день народження, DJ на вечірку Львів, DJ на свято, музиканти Львів, замовити музику на весілля, DJ TREZO" />
         <meta name="robots" content="index, follow" />
         <meta name="author" content="DJ TREZO" />
         <meta name="theme-color" content="#0a0a0a" />
@@ -164,7 +164,7 @@ export default function Home({ c }) {
         {/* Open Graph — для Facebook, Viber, Telegram */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://dj-trezo.top" />
-        <meta property="og:title" content="DJ TREZO — Діджей на весілля та корпоративи у Львові" />
+        <meta property="og:title" content="DJ TREZO — Діджей (Диджей) на весілля та корпоративи у Львові" />
         <meta property="og:description" content="Професійний діджей у Львові. Весілля, корпоративи, клубні вечірки. 4+ роки досвіду, 200+ подій. Гарантована якість звуку." />
         <meta property="og:image" content="https://dj-trezo.top/images/packages/dj_trezo.jpg" />
         <meta property="og:image:width" content="1200" />
