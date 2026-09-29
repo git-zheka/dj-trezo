@@ -383,7 +383,7 @@ export default function Home({ c }) {
           <span className="section-tag">Запитання та відповіді</span>
           <h2 className="section-title">Часті <span className="em">запитання</span></h2>
         </div>
-        <div className="faq-list fade-in">
+        <div className="faq-list">
           {FAQS.map((faq, i) => <FaqItem key={i} q={faq.q} a={faq.a} />)}
         </div>
       </section>
