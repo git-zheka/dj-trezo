@@ -117,6 +117,7 @@ export default function Home({ c }) {
         <meta name="author" content="DJ TREZO" />
         <meta name="theme-color" content="#0a0a0a" />
         <link rel="canonical" href="https://dj-trezo.top" />
+        <meta name="google-site-verification" content="KFSdWs6oTMSm4VZ5k4PpCtuvJ7PX_c4aeg7AjIDw5FY" />
 
         {/* Open Graph — для Facebook, Viber, Telegram */}
         <meta property="og:type" content="website" />
